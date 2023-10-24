@@ -21,7 +21,7 @@
 
 const unsigned int MAX_SPEED = 1000;
 const unsigned int ESTOP_SELECTOR = 0;
-const unsigned int THRESHOLD = 50;
+const unsigned int THRESHOLD = 100;
 
 // proximity sensors initialization
 messagebus_t bus;
@@ -103,22 +103,46 @@ int main(void)
       // e_send_uart1_char(prox_str, str_length);    // obstacle avoidance
 
 
-      // if object is on left, turn right
-      if (get_calibrated_prox(5) > THRESHOLD && get_calibrated_prox(6) > THRESHOLD && get_calibrated_prox(7) > THRESHOLD) {
-        turn_right(MAX_SPEED);
+      // object avoidance
+      // // if object is on left, turn right
+      // if (get_calibrated_prox(5) > THRESHOLD && get_calibrated_prox(6) > THRESHOLD && get_calibrated_prox(7) > THRESHOLD) {
+      //   turn_right(MAX_SPEED);
+      // } else if (get_calibrated_prox(0) > THRESHOLD && get_calibrated_prox(1) > THRESHOLD && get_calibrated_prox(2) > THRESHOLD) {
+      //   turn_left(MAX_SPEED);
+      // } else if (get_calibrated_prox(0) > THRESHOLD && get_calibrated_prox(1) > THRESHOLD) {
+      //   turn_left(MAX_SPEED);
+      // } else if (get_calibrated_prox(5) > THRESHOLD && get_calibrated_prox(6) > THRESHOLD) {
+      //   turn_right(MAX_SPEED);
+      // } else if (get_calibrated_prox(0) > THRESHOLD) {
+      //   turn_left(MAX_SPEED);
+      // } else if (get_calibrated_prox(5) > THRESHOLD) {
+      //   turn_right(MAX_SPEED);
+      // } else {
+      //   move_forward(MAX_SPEED);
+      // }
+
+      // following object
+      // if object is too close, stop
+      if (get_calibrated_prox(0) > 2 * THRESHOLD || get_calibrated_prox(7) > 2 * THRESHOLD) {
+        stop();
+      } else if (get_calibrated_prox(5) > THRESHOLD && get_calibrated_prox(6) > THRESHOLD && get_calibrated_prox(7) > THRESHOLD) {
+        turn_left(MAX_SPEED);
       } else if (get_calibrated_prox(0) > THRESHOLD && get_calibrated_prox(1) > THRESHOLD && get_calibrated_prox(2) > THRESHOLD) {
-        turn_left(MAX_SPEED);
+        turn_right(MAX_SPEED);
       } else if (get_calibrated_prox(0) > THRESHOLD && get_calibrated_prox(1) > THRESHOLD) {
-        turn_left(MAX_SPEED);
+        turn_right(MAX_SPEED);
       } else if (get_calibrated_prox(5) > THRESHOLD && get_calibrated_prox(6) > THRESHOLD) {
-        turn_right(MAX_SPEED);
-      } else if (get_calibrated_prox(0) > THRESHOLD) {
         turn_left(MAX_SPEED);
-      } else if (get_calibrated_prox(5) > THRESHOLD) {
+      } else if (get_calibrated_prox(0) > THRESHOLD) {
         turn_right(MAX_SPEED);
+      } else if (get_calibrated_prox(5) > THRESHOLD) {
+        turn_left(MAX_SPEED);
       } else {
         move_forward(MAX_SPEED);
       }
+
+
+
     }
 
 
