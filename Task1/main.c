@@ -22,7 +22,7 @@
 
 const unsigned int MAX_SPEED = 1000;
 const unsigned int ESTOP_SELECTOR = 0;
-const unsigned int THRESHOLD = 50;
+const unsigned int THRESHOLD = 100;
 
 // proximity sensors initialization
 messagebus_t bus;
@@ -84,15 +84,60 @@ void obstacle_avoidance() {
   // right half - 0, 1, 2, 3
 
   // object avoidance
-  // if object is on left, turn right
-  if (get_calibrated_prox(5) > THRESHOLD && get_calibrated_prox(6) > THRESHOLD && get_calibrated_prox(7) > THRESHOLD) {
+
+  // // if object is headon, rotate right
+  // if (get_calibrated_prox(0) > THRESHOLD && get_calibrated_prox(1) > THRESHOLD && get_calibrated_prox(2) > THRESHOLD && \
+  //   get_calibrated_prox(3) > THRESHOLD && get_calibrated_prox(4) > THRESHOLD && get_calibrated_prox(5) > THRESHOLD && \
+  //   get_calibrated_prox(6) > THRESHOLD && get_calibrated_prox(7) > THRESHOLD) {
+  //   turn_right(MAX_SPEED);
+  // }
+  
+  // // if object is is on left and right, but if front is clear, move forward
+  // else if (get_calibrated_prox(1) > THRESHOLD && get_calibrated_prox(2) > THRESHOLD && get_calibrated_prox(3) > THRESHOLD && \ 
+  //   get_calibrated_prox(4) > THRESHOLD && get_calibrated_prox(5) > THRESHOLD && get_calibrated_prox(6) > THRESHOLD && \
+  //   get_calibrated_prox(7) < THRESHOLD && get_calibrated_prox(0) < THRESHOLD) {
+  //   move_forward(MAX_SPEED);
+    
+  // // if object is on left, turn right
+  // } else if (get_calibrated_prox(5) > THRESHOLD && get_calibrated_prox(6) > THRESHOLD && get_calibrated_prox(7) > THRESHOLD) {
+  //   turn_right(MAX_SPEED);
+    
+  // // if object is on right, turn left
+  // } else if (get_calibrated_prox(0) > THRESHOLD && get_calibrated_prox(1) > THRESHOLD && get_calibrated_prox(2) > THRESHOLD) {
+  //   turn_left(MAX_SPEED);
+  
+  // // move forward
+  // } else {
+  //   move_forward(MAX_SPEED);
+  // }
+
+
+  // object avoidance
+  // u side
+  if (get_calibrated_prox(1) > THRESHOLD && get_calibrated_prox(2) > THRESHOLD  && \
+    get_calibrated_prox(5) > THRESHOLD && get_calibrated_prox(6) > THRESHOLD && \
+    get_calibrated_prox(7) > THRESHOLD && get_calibrated_prox(8) > THRESHOLD) {
+    turn_right(MAX_SPEED);
+    chThdSleepMilliseconds(1000); // recovery
+  } else if (get_calibrated_prox(1) > THRESHOLD && get_calibrated_prox(2) > THRESHOLD  && \
+    get_calibrated_prox(5) > THRESHOLD && get_calibrated_prox(6) > THRESHOLD && \
+    get_calibrated_prox(7) < THRESHOLD && get_calibrated_prox(8) < THRESHOLD) {
+    move_forward(MAX_SPEED);
+  } else if (get_calibrated_prox(5) > THRESHOLD && get_calibrated_prox(6) > THRESHOLD && get_calibrated_prox(7) > THRESHOLD) {
     turn_right(MAX_SPEED);
   } else if (get_calibrated_prox(0) > THRESHOLD && get_calibrated_prox(1) > THRESHOLD && get_calibrated_prox(2) > THRESHOLD) {
     turn_left(MAX_SPEED);
+  } else if (get_calibrated_prox(0) > THRESHOLD && get_calibrated_prox(1) > THRESHOLD) {
+    turn_left(MAX_SPEED);
+  } else if (get_calibrated_prox(5) > THRESHOLD && get_calibrated_prox(6) > THRESHOLD) {
+    turn_right(MAX_SPEED);
+  } else if (get_calibrated_prox(0) > THRESHOLD) {
+    turn_left(MAX_SPEED);
+  } else if (get_calibrated_prox(5) > THRESHOLD) {
+    turn_right(MAX_SPEED);
   } else {
     move_forward(MAX_SPEED);
   }
-
 
 }
 
@@ -129,6 +174,7 @@ int main(void)
     }
     else {
       obstacle_avoidance();
+      chThdSleepMilliseconds(100);
     }
   }
 }
